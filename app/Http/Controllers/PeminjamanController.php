@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 class PeminjamanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $users = User::where('role', 'staff')->get();
@@ -55,7 +52,6 @@ class PeminjamanController extends Controller
 
         return view('admin.pinjam-kendaraan', compact('users', 'user', 'peminjaman', 'kendaraanTersedia', 'kendaraan'));
     }
-
 
     public function tambahkendaraan(request $request)
     {
@@ -141,9 +137,6 @@ class PeminjamanController extends Controller
         return view('admin.form-peminjaman', compact('kendaraan', 'user'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         // Validasi data
@@ -180,35 +173,16 @@ class PeminjamanController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function peminjamanSaya()
     {
-        //
-    }
+        $user = Auth::user();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        $peminjamanSaya = Peminjaman::with('kendaraan')
+            ->where('id_user', $user->id)  // Mengambil peminjaman yang terkait dengan user yang login
+            ->orderBy('created_at', 'desc') // Mengurutkan data berdasarkan waktu pembuatan
+            ->get();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Mengirimkan data peminjaman ke view
+        return view('admin.peminjaman-saya', compact('peminjamanSaya', 'user'));
     }
 }

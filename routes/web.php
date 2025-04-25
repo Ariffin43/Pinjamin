@@ -4,6 +4,7 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DaftarKendaraanController;
 use App\Http\Controllers\DaftarPermohonanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegisterController;
@@ -39,14 +40,17 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('timeline-peminjaman', controller: TimelineController::class);
 
     Route::get('/daftar-permohonan', [DaftarPermohonanController::class, 'index'])->name('daftar-permohonan');
-    Route::resource(name: 'daftar-permohonan', controller: DaftarPermohonanController::class);
+    Route::resource(name: 'daftar-permohonan', controller: DaftarPermohonanController::class)->except(['index']);
     Route::post('/daftar-permohonan/{id}/accept', [DaftarPermohonanController::class, 'accept']);
     Route::post('/daftar-permohonan/{id}/reject', [DaftarPermohonanController::class, 'reject']);
 
-    Route::get('/permohonan-verifikasi', [VerifAkunController::class, 'index']);
+    Route::get('/permohonan-verifikasi', [VerifAkunController::class, 'index'])->name('permohonan-verifikasi');
     Route::post('/permohonan-verifikasi/{id}', [VerifAkunController::class, 'verifikasi'])->name('verifikasi.terima');
     Route::delete('/permohonan-verifikasi/{id}', [VerifAkunController::class, 'reject'])->name('verifikasi.tolak');
 
+    Route::get('/peminjaman-saya', [PeminjamanController::class, 'peminjamanSaya'])->name('peminjaman.saya');
+    Route::get('/peminjaman-saya/{id}/form-pengembalian', [PeminjamanController::class, 'formPengembalian'])->name('form.pengembalian');
+    Route::put('/peminjaman-saya/{id}/kembalikan', [PeminjamanController::class, 'kembalikanKendaraan'])->name('pengembalian.kendaraan');
 
     Route::get('/user', [UsersController::class, 'index'])->name('user');
     Route::resource(name: 'user', controller: UsersController::class);
