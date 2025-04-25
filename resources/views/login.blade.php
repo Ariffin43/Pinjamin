@@ -18,9 +18,12 @@
 
             <form method="POST" action="{{ route('login') }}" class="flex flex-col md:w-80 gap-3 mt-8 tracking-wide">
                 @csrf
-                @if ($errors->any())
-                    <div>{{ $errors->first() }}</div>
+                @if ($errors->has('nip'))
+                <div style="background-color: #fe3333 ; border-color: #e57373; color: #ffff;" class="px-4 py-3 rounded relative text-sm flex items-start gap-2" role="alert">
+                        <span>{{ $errors->first('nip') }}</span>
+                    </div>
                 @endif
+
                 <div class="flex flex-col gap-1">
                     <p class="font-semibold relative">NIP</p>
                     <input type="text" name="nip" placeholder="NIP"

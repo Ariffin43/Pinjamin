@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Peminjaman;
 use App\Models\Kendaraan;
+use App\Models\Merek;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,7 @@ class PeminjamanController extends Controller
     {
         $users = User::where('role', 'staff')->get();
         $user = Auth::user();
+        $merek = Merek::all();
 
         if (auth()->user()->role === 'admin') {
             $peminjaman = Peminjaman::with('kendaraan')->get();
@@ -50,7 +52,7 @@ class PeminjamanController extends Controller
         // Ambil kembali kendaraan yang statusnya Available untuk form input
         $kendaraanTersedia = Kendaraan::where('status_kendaraan', 'Available')->get();
 
-        return view('admin.pinjam-kendaraan', compact('users', 'user', 'peminjaman', 'kendaraanTersedia', 'kendaraan'));
+        return view('admin.pinjam-kendaraan', compact('users', 'user', 'merek', 'peminjaman', 'kendaraanTersedia', 'kendaraan'));
     }
 
     public function tambahkendaraan(request $request)
@@ -133,8 +135,9 @@ class PeminjamanController extends Controller
     {
         $kendaraan = Kendaraan::findOrFail($id);
         $user = Auth::user();
+        $merek = Merek::all();
 
-        return view('admin.form-peminjaman', compact('kendaraan', 'user'));
+        return view('admin.form-peminjaman', compact('kendaraan', 'user', 'merek'));
     }
 
     public function store(Request $request)

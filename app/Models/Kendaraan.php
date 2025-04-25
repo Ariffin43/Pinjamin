@@ -12,12 +12,13 @@ class Kendaraan extends Model
     protected $table = 'kendaraan';
 
     protected $fillable = [
-        'merk',
+        'id_merek',
         'seri',
         'no_plat',
         'jenis_kendaraan',
         'detail_kendaraan',
         'status_kendaraan',
+        'lokasi_awal',
         'image',
     ];
 
@@ -25,6 +26,13 @@ class Kendaraan extends Model
     {
         return $this->hasMany(Peminjaman::class);
     }
+
+    // Model Kendaraan
+    public function merek()
+    {
+        return $this->belongsTo(Merek::class, 'id_merek');
+    }
+
     public function peminjamanAktif()
     {
         return $this->hasOne(Peminjaman::class)->where('status_peminjaman', 'Di Terima');

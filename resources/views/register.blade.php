@@ -79,15 +79,21 @@
                         <span class="text-red-500 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
-
-                <!-- Prodi -->
+                
+                <!-- Jurusan -->
                 <div class="flex flex-col w-full mb-4">
-                    <label for="prodi" class="block text-sm font-medium focus:ring-2 focus:ring-blue-400">Prodi</label>
-                    <select name="prodi" id="prodi" class="p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-400">
-                        <option value="TRPL">Teknik Rekayasa Perangkat Lunak</option>
-                        <option value="MB">Manajemen Bisnis</option>
-                        <option value="TI">Teknik Informatika</option>
+                    <label for="id_jurusan" class="block text-sm font-medium">Jurusan</label>
+                    <select name="id_jurusan" id="id_jurusan" required class="p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-400">
+                        <option value="">Pilih Salah Satu</option>
+                        @foreach ($jurusans as $jurusan)
+                            <option value="{{ $jurusan->id_jurusan }}" {{ old('id_jurusan') == $jurusan->id_jurusan ? 'selected' : '' }}>
+                                {{ $jurusan->nama_jurusan }}
+                            </option>
+                        @endforeach
                     </select>
+                    @error('id_jurusan')
+                        <span class="text-red-500 text-sm">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <!-- Password -->
@@ -109,6 +115,45 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const jurusanProdiMap = {
+        1: { // Jurusan 1
+            'Akuntansi': 'Akuntansi',
+            'Akuntansi Manajerial': 'Akuntansi Manajerial',
+            'Administrasi Bisnis Terapan': 'Administrasi Bisnis Terapan',
+            'Logistik Perdagangan Internasional': 'Logistik Perdagangan Internasional',
+            'Jalur Cepat Distribusi Barang': 'Jalur Cepat Distribusi Barang',
+        },
+        2: { // Jurusan 2
+            'Elektronika Manufaktur': 'Elektronika Manufaktur',
+            'Teknologi Rekayasa Elektronika': 'Teknologi Rekayasa Elektronika',
+            'Instrumentasi': 'Instrumentasi',
+            'Teknik Mekatronika': 'Teknik Mekatronika',
+            'Teknologi Rekayasa Pembangkit Energi': 'Teknologi Rekayasa Pembangkit Energi',
+            'Teknologi Rekayasa Robotika': 'Teknologi Rekayasa Robotika',
+        },
+        3: { // Jurusan 3
+            'Teknik Informatika': 'Teknik Informatika',
+            'Teknologi Geomatika': 'Teknologi Geomatika',
+            'Animasi': 'Animasi',
+            'Teknologi Rekayasa Multimedia': 'Teknologi Rekayasa Multimedia',
+            'Rekayasa Keamanan Siber': 'Rekayasa Keamanan Siber',
+            'Rekayasa Perangkat Lunak': 'Rekayasa Perangkat Lunak',
+            'Rekayasa / Teknik Komputer': 'Rekayasa / Teknik Komputer',
+            'Teknologi Permainan': 'Teknologi Permainan',
+        },
+        4: { // Jurusan 4
+            'Teknik Mesin': 'Teknik Mesin',
+            'Teknik Perawatan Pesawat Udara': 'Teknik Perawatan Pesawat Udara',
+            'Teknologi Rekayasa Konstruksi Perkapalan': 'Teknologi Rekayasa Konstruksi Perkapalan',
+            'Teknologi Rekayasa Pengelasan dan Fabrikasi': 'Teknologi Rekayasa Pengelasan dan Fabrikasi',
+            'Program Profesi Insinyur (PSPPI)': 'Program Profesi Insinyur (PSPPI)',
+            'Teknologi Rekayasa Metalurgi': 'Teknologi Rekayasa Metalurgi',
+        }
+    };
+
+    </script>
 </body>
 
 </html>

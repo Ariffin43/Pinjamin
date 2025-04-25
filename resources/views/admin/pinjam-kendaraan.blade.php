@@ -172,8 +172,22 @@
                             <form id="popupFormPinjam" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="mb-4">
-                                    <label for="merk">Merk</label>
-                                    <input type="text" id="merk" name="merk" required class="w-full p-2 border rounded-md">
+                                    <label for="id_merek">Jenis Kendaraan</label>
+                                        <select name="jenis_kendaraan" required class="w-full p-2 border rounded-md">
+                                            <option value="">Pilih Salah Satu</option>
+                                            <option value="Mobil">Mobil</option>
+                                            <option value="Motor">Motor</option>
+                                            <option value="Bus">Bus</option>
+                                        </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="id_merek">Merek</label>
+                                    <select name="id_merek" required class="w-full p-2 border rounded-md">
+                                        <option value="">Pilih Salah Satu</option>
+                                        @foreach($merek as $merk)
+                                            <option value="{{ $merk->id }}">{{ $merk->nama }}</option>
+                                        @endforeach
+                                    </select>   
                                 </div>
                                 <div class="mb-4">
                                     <label for="seri">Seri</label>
@@ -182,10 +196,6 @@
                                 <div class="mb-4">
                                     <label for="no_plat">No Plat</label>
                                     <input type="text" id="no_plat" name="no_plat" required class="w-full p-2 border rounded-md">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="jenis_kendaraan">Jenis Kendaraan</label>
-                                    <input type="text" id="jenis_kendaraan" name="jenis_kendaraan" required class="w-full p-2 border rounded-md">
                                 </div>
                                 <div class="mb-4">
                                     <label for="detail_kendaraan">Detail Kendaraan</label>
@@ -197,6 +207,10 @@
                                         <option value="Available">Available</option>
                                         <option value="Perbaikan">Perbaikan</option>
                                     </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="lokasi">Lokasi</label>
+                                    <input type="text" id="lokasi" name="lokasi_awal" required class="w-full p-2 border rounded-md">
                                 </div>
                                 <div class="mb-4">
                                     <label for="image">Gambar Kendaraan</label>

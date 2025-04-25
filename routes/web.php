@@ -32,9 +32,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/form-peminjaman/{id}', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     
     // CRUD Daftar Kendaraan
-    Route::post('/tambah-kendaraan', [PeminjamanController::class, 'tambahkendaraan'])->name('tambahkendaraan');
-    Route::post('/edit-kendaraan/{id}', [PeminjamanController::class, 'editkendaraan'])->name('editkendaraan');
-    Route::delete('/hapus-kendaraan/{id}', [PeminjamanController::class, 'hapuskendaraan'])->name('hapuskendaraan');
+    Route::post('/tambah-kendaraan', [DaftarKendaraanController::class, 'store'])->name('tambahkendaraan');
+    Route::post('/edit-kendaraan/{id}', [DaftarKendaraanController::class, 'update'])->name('editkendaraan');
+    Route::delete('/hapus-kendaraan/{id}', [DaftarKendaraanController::class, 'destroy'])->name('hapuskendaraan');
 
     Route::get('/timeline-peminjaman', [TimelineController::class, 'index'])->name('timeline-peminjaman');
     Route::resource('timeline-peminjaman', controller: TimelineController::class);

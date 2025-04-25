@@ -43,8 +43,6 @@ class AuthController extends Controller
             'nip' => 'NIP atau Password salah.',
         ]);
     }
-
-
     public function logout(Request $request)
     {
         Auth::logout();

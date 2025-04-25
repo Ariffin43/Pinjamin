@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | Users</title>
+    <title>Dashboard | Admin</title>
     @vite('resources/css/app.css')
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="bg-slate-200">
@@ -17,33 +16,38 @@
             class="flex flex-col absolute md:fixed inset-y-0 left-0 z-50 bg-white w-64 h-full p-5 transition-transform transform -translate-x-full md:translate-x-0 shadow-sm">
             <button id="closeSidebar" class="md:hidden text-2xl mb-4 self-end">✕</button>
             <div class="flex w-36 mb-10">
-                <img src="../../assets/logo.png" alt="Logo">
+                <img src="../assets/logo.png" alt="Logo">
             </div>
 
             <ul class="flex flex-col gap-4 text-primary2 font-semibold text-sm">
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/dashboard"
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="dashboard"
                         class="flex items-center"><ion-icon name="apps" class="text-2xl pr-2"></ion-icon>Dashboard</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/timeline-peminjaman"
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="timeline-peminjaman"
                         class="flex items-center"><ion-icon name="calendar" class="text-2xl pr-2"></ion-icon>Timeline
                         Peminjaman</a></li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/pinjam-kendaraan"
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="pinjam-kendaraan"
                         class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Pinjam
-                        Kendaraan</a></li>
-                @if(auth()->user()->role !== 'staff')        
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="/daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
-                        Permohonan
-                    </a>
+                        Kendaraan</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="/user" class="flex items-center">
-                        <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
-                    </a>
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="peminjaman-saya.html"
+                    class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Peminjaman
+                    Saya</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/permohonan-verifikasi"
-                        class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
-                </li>
+                @if(auth()->user()->role !== 'staff')
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
+                            Permohonan
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="user" class="flex items-center">
+                            <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
+                            class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
+                    </li>
                 @endif
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="logout"
                         class="flex items-center"><ion-icon name="log-out" class="text-2xl pr-2"></ion-icon>Keluar</a>
@@ -58,8 +62,7 @@
 
             <!-- Navbar -->
             <div class="flex justify-between">
-                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Pinjam Kendaraan
-                </h1>
+                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Dashboard</h1>
 
                 <button class="flex w-fit gap-3" id="openPopupProfile">
                     <div class="flex flex-col text-sm">
@@ -68,7 +71,7 @@
                     </div>
                     <div class="flex">
                         <div class="w-9 h-9 overflow-hidden rounded-full my-auto bg-center bg-cover shadow-sm"
-                            style="background-image: url(../../assets/user\ \(2\).jpg);"></div>
+                            style="background-image: url(../assets/user\ \(2\).jpg);"></div>
                     </div>
                 </button>
 
@@ -157,60 +160,83 @@
                 </div>
             </div>
 
-            <!-- Konten Utama -->
-            <div class="relative overflow-x-auto mt-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto m-auto">
-                    <h2 class="text-xl font-semibold mb-4">Pinjam Kendaraan</h2>
-                    <form id="popupFormPinjam1" class="font-normal" action="{{ route('pinjam-kendaraan.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="id_kendaraan" value="{{ $kendaraan->id }}">
-                        <input type="hidden" name="id_user" value="{{ $user->id }}">
+            {{-- Main Konten --}}
+            <div class="relative overflow-x-auto rounded-lg mt-8">
+                <!-- Filter -->
+                <div class="flex justify-between whitespace-nowrap gap-2">
+                    <div class="flex mb-2 items-center ml-auto w-fit">
+                        <input type="text" id="search" placeholder="Cari..." class="p-2 border rounded-md mr-2"
+                            onkeyup="searchTable()">
+
+                        <label for="sort" class="mr-2 font-semibold">Sort by</label>
+                        <select name="sort" id="sort" class="p-2 border rounded-md cursor-pointer">
+                            <option value="terbaru">Terbaru</option>
+                            <option value="terlama">Terlama</option>
+                        </select>
+                    </div>
+
+                    <script>
+                        function searchTable() {
+                            const input = document.getElementById('search').value.toLowerCase();
+                            const rows = document.querySelectorAll('tbody tr');
+
+                            rows.forEach(row => {
+                                const text = row.textContent.toLowerCase();
+                                row.style.display = text.includes(input) ? '' : 'none';
+                            });
+                        }
+                    </script>
+                </div>
+
+                {{-- Data Peminjaman --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 font-poppins">
+                    @forelse($peminjamanSaya as $data)
+                    <div class="flex flex-col bg-white rounded-xl w-full overflow-hidden">
+                        <img src="{{ asset('storage/' . $data->kendaraan->image ?? 'default.jpg') }}" alt="" class="w-full">
+                        <div class="flex flex-col p-2 gap-1 text-sm">
+                            <b>{{ $data->kendaraan->merk ?? '-' }}</b>
+                            <p>{{ $data->kendaraan->tipe ?? '-' }}</p>
+                            <p>{{ \Carbon\Carbon::parse($data->tanggal_awal_peminjaman)->format('m/d/Y h:i A') }} -
+                               {{ \Carbon\Carbon::parse($data->tanggal_akhir_peminjaman)->format('m/d/Y h:i A') }}</p>
+                            <p>{{ $data->tujuan_peminjaman }}</p>
                 
-                        <div class="mb-4">
-                            <label for="id_merek">Merek</label>
-                            <select name="id_merek" required class="w-full p-2 border rounded-md">
-                                <option value="">Pilih Salah Satu</option>
-                                @foreach($merek as $merk)
-                                    <option value="{{ $merk->id }}">{{ $merk->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="seri" class="block font-semibold text-sm">Seri</label>
-                            <input type="text" id="seri" name="seri" required value="{{ $kendaraan->seri }}" readonly
-                                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
-                        </div>
-                        <div class="mb-4">
-                            <label for="tanggal_awal_peminjaman" class="block font-semibold text-sm">Estimasi Awal</label>
-                            <div class="flex flex-col gap-2">
-                                <input type="datetime-local" id="tanggal_awal_peminjaman" name="tanggal_awal_peminjaman" required
-                                    class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
-                                
-                                <label for="tanggal_akhir_peminjaman" class="block font-semibold text-sm">Estimasi Akhir</label>
-                                <input type="datetime-local" id="tanggal_akhir_peminjaman" name="tanggal_akhir_peminjaman" required
-                                    class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
+                            <div class="flex flex-wrap items-center gap-2 py-2 font-poppins text-sm whitespace-nowrap">
+                                <p class="flex items-center gap-1">
+                                    Status:
+                                    @if ($data->status_peminjaman === 'Pending')
+                                        <span class="bg-yellow-300 text-yellow-900 px-3 py-2 rounded-md font-semibold">
+                                            Menunggu Persetujuan
+                                        </span>
+                                    @elseif ($data->status_peminjaman === 'Di Terima')
+                                        <span class="bg-green-400 px-3 py-2 rounded-md font-semibold">
+                                            Disetujui
+                                        </span>
+                                    @else
+                                        <span class="bg-red-400 px-3 py-2 rounded-md font-semibold">
+                                            Ditolak
+                                        </span>
+                                    @endif
+                                </p>
+                
+                                @if ($data->status_peminjaman === 'Di Terima')
+                                    <a href="{{ route('form.pengembalian', ['id' => $data->id]) }}"
+                                        class="bg-green-400 hover:bg-green-600 px-3 py-2 rounded-md font-semibold transition-all duration-200">
+                                        Form Pengembalian
+                                    </a>
+                                 
+                                @endif
                             </div>
                         </div>
-                        <div class="mb4">
-                            <label for="tujuan" class="block text-sm font-medium">Tujuan Peminjaman</label>
-                            <textarea name="tujuan_peminjaman" id="tujuan_peminjaman"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-                        </div>
-
-                        <input type="text" name="status_peminjaman" value="Pending" hidden>
-
-                        <div class="flex justify-end space-x-2">
-                            <a href="/pinjam-kendaraan"
-                                class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</a>
-                            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">Submit</button>
-                        </div>
-                    </form>
+                    </div>
+                    @empty
+                        <div class="col-span-3 text-center text-gray-500">Belum ada peminjaman kendaraan.</div>
+                    @endforelse
                 </div>
+                
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const openSidebar = document.getElementById('openSidebar');
@@ -239,49 +265,7 @@
         closePopup.addEventListener('click', () => {
             popup.classList.add('hidden');
         });
-
-        // Submit form
-        document.getElementById('popupForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Form submitted!');
-            popup.classList.add('hidden');
-        });
-
     </script>
-
-    <script>
-    $(document).ready(function () {
-        $("#popupFormPinjam1").submit(function (e) {
-            e.preventDefault(); // Mencegah reload halaman
-
-            $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "json", // Pastikan response adalah JSON
-                success: function (response) {
-                    if (response.status === "success") {
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then(() => {
-                            window.location.href = "/timeline-peminjaman"; // Redirect ke halaman lain
-                        });
-                    } else {
-                        Swal.fire("Error!", response.message, "error");
-                    }
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText); // Cek error di console
-                    Swal.fire("Error!", "Terjadi kesalahan saat menyimpan data.", "error");
-                }
-            });
-        });
-    });
-    </script>
-    
 </body>
 
 

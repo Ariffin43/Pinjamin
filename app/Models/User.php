@@ -13,12 +13,18 @@ class User extends Authenticatable
     protected $fillable = [
         'role',
         'nip',
+        'id_jurusan',
         'nama',
         'email',
         'no_hp',
+        'foto',
         'foto_ktp',
-        'prodi',
         'password',
         'status',
     ];
+
+    public function jurusan()
+    {
+        return $this->belongsTo(Jurusan::class, 'id_jurusan', 'id_jurusan');
+    }
 }

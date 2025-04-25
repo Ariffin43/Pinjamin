@@ -28,21 +28,26 @@
                         Peminjaman</a></li>
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="pinjam-kendaraan"
                         class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Pinjam
-                        Kendaraan</a></li>
-                @if(auth()->user()->role !== 'staff')        
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
-                        Permohonan
-                    </a>
+                        Kendaraan</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="user" class="flex items-center">
-                        <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
-                    </a>
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/peminjaman-saya"
+                    class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Peminjaman
+                    Saya</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
-                        class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
-                </li>
+                @if(auth()->user()->role !== 'staff')
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
+                            Permohonan
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="user" class="flex items-center">
+                            <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
+                            class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
+                    </li>
                 @endif
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="logout"
                         class="flex items-center"><ion-icon name="log-out" class="text-2xl pr-2"></ion-icon>Keluar</a>
@@ -57,7 +62,7 @@
 
             <!-- Navbar -->
             <div class="flex justify-between">
-                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Analiytics</h1>
+                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Dashboard</h1>
 
                 <button class="flex w-fit gap-3" id="openPopupProfile">
                     <div class="flex flex-col text-sm">
@@ -77,7 +82,7 @@
                         <h2 class="text-xl font-semibold mb-4">Form: Data Diri</h2>
 
                         <!-- Modal Form -->
-                        <form id="popupFormProfile">
+                        <form id="popupFormProfile" method="POST">
 
                             <div class="mb-4">
                                 <label for="foto-profile" class="block text-sm font-medium">Foto Profile</label>
@@ -129,11 +134,11 @@
 
                                 <div class="flex justify-between gap-2 mb-4">
                                     <div class="flex flex-col w-full">
-                                        <label for="depart" class="block text-sm font-medium">Prodi</label>
-                                        <select name="departemen" id="depart" class="p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-400">
-                                            <option value="informatika" {{ $user->departemen == 'informatika' ? 'selected' : '' }}>Informatika</option>
-                                            <option value="mesin" {{ $user->departemen == 'mesin' ? 'selected' : '' }}>Mesin</option>
-                                            <option value="bisnis" {{ $user->departemen == 'bisnis' ? 'selected' : '' }}>Manajemen Bisnis</option>
+                                        <label for="prodi" class="block text-sm font-medium">Prodi</label>
+                                        <select name="prodi" id="prodi" class="p-2 border rounded-md w-full focus:ring-2 focus:ring-blue-400">
+                                            <option value="informatika" {{ $user->prodi == 'informatika' ? 'selected' : '' }}>Informatika</option>
+                                            <option value="mesin" {{ $user->prodi == 'mesin' ? 'selected' : '' }}>Mesin</option>
+                                            <option value="bisnis" {{ $user->prodi == 'bisnis' ? 'selected' : '' }}>Manajemen Bisnis</option>
                                         </select>
                                     </div>
                                 </div>
@@ -156,133 +161,186 @@
             </div>
 
             <!-- Konten Utama -->
-            <div class="flex flex-col sm:flex-row justify-between mt-5 gap-5">
-                <div class="flex justify-between text-primary2 h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
-                    <div class="flex flex-col gap-1 md:gap-2">
-                        <h1 class="font-bold text-xl xl:text-3xl">{{ $available }}</h1>
-                        <p class="text-lg xl:text-lg">Available</p>
-                    </div>
-            
-                    <p class="text-center flex items-center w-fit"><ion-icon name="podium" class="text-3xl xl:text-6xl"></ion-icon></p>
-                </div>
-            
-                <div class="flex text-primary2 justify-between h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
-                    <div class="flex flex-col gap-1 md:gap-2">
-                        <h1 class="font-bold text-xl xl:text-3xl">{{ $used }}</h1>
-                        <p class="text-lg xl:text-lg">Digunakan</p>
-                    </div>
-            
-                    <p class="text-center flex items-center w-fit"><ion-icon name="map" class="text-3xl xl:text-6xl"></ion-icon></p>
-                </div>
-            
-                <div class="flex justify-between text-primary2 h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
-                    <div class="flex flex-col gap-1 md:gap-2">
-                        <h1 class="font-bold text-xl xl:text-3xl">{{ $repair }}</h1>
-                        <p class="text-lg xl:text-lg">Perbaikan</p>
-                    </div>
-            
-                    <p class="text-center flex items-center w-fit"><ion-icon name="cog" class="text-3xl xl:text-6xl"></ion-icon></p>
-                </div>
-            </div>            
-
-            <!-- USER -->
-            <div class="flex mt-8 flex-col">
-                <h1 class="font-semibold font-poppins text-xl">Users</h1>
-                <div class="flex flex-wrap justify-start mt-2 gap-12 bg-white shadow-md px-6 md:px-8 xl:px-12 py-5 rounded-xl">
-                    @foreach ($users as $user)
-                        <div class="flex flex-col gap-3 w-fit text-center hover:bottom-2 transition-all">
-                            <div class="background w-12 h-12 xl:w-20 xl:h-20 bg-center bg-cover rounded-full m-auto shadow-sm"
-                                style="background-image: url('https://ui-avatars.com/api/?name={{ urlencode($user->nama) }}&background=random&color=fff');">
+            <div class="flex flex-col lg:flex-row gap-5 mt-5">
+                <!-- Left / Main content -->
+                <div class="w-full {{ auth()->user()->role !== 'staff' ? 'lg:w-2/3' : '' }}">
+                    {{-- Info Kendaraan --}}
+                    <div class="flex flex-col sm:flex-row justify-between gap-5">
+                        <div class="flex justify-between text-primary2 h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
+                            <div class="flex flex-col gap-1 md:gap-2">
+                                <h1 class="font-bold text-xl xl:text-3xl">{{ $available }}</h1>
+                                <p class="text-lg xl:text-lg">Available</p>
                             </div>
-                            <div class="flex flex-col">
-                                <h1 class="font-bold tracking-wide text-center text-base sm:text-lg xl:text-xl font-poppins">
-                                    {{ $user->nama }}
-                                </h1>
-                                <p class="text-center text-slate-400 font-poppins text-xs md:text-sm">
-                                    {{ $user->departemen }}
-                                </p>
-                            </div>
+                    
+                            <p class="text-center flex items-center w-fit"><ion-icon name="podium" class="text-3xl xl:text-6xl"></ion-icon></p>
                         </div>
-                    @endforeach
-                    <!-- Button Tambah User -->
-                    @can('admin')
-                        <a href="/tambah-users"
-                            class="flex flex-col gap-3 w-fit text-center my-auto relative hover:bottom-2 md:hover:bottom-0 transition-all">
-                            <ion-icon name="add"
-                                class="md:text-3xl xl:text-7xl font-bold rounded-full p-2 hover:bg-slate-100"></ion-icon>
-                            <p class="font-bold font-poppins tracking-wide text-center text-xs text-slate-400 hover:text-primary2">
-                                Selengkapnya..
-                            </p>
-                        </a>
-                    @endcan
-                </div>                           
-            </div>            
+                    
+                        <div class="flex text-primary2 justify-between h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
+                            <div class="flex flex-col gap-1 md:gap-2">
+                                <h1 class="font-bold text-xl xl:text-3xl">{{ $used }}</h1>
+                                <p class="text-lg xl:text-lg">Digunakan</p>
+                            </div>
+                    
+                            <p class="text-center flex items-center w-fit"><ion-icon name="map" class="text-3xl xl:text-6xl"></ion-icon></p>
+                        </div>
+                    
+                        <div class="flex justify-between text-primary2 h-fit w-full sm:w-1/2 xl:w-80 p-5 xl:p-10 rounded-md bg-white shadow-md hover:bg-primary2 hover:text-white">
+                            <div class="flex flex-col gap-1 md:gap-2">
+                                <h1 class="font-bold text-xl xl:text-3xl">{{ $repair }}</h1>
+                                <p class="text-lg xl:text-lg">Perbaikan</p>
+                            </div>
+                    
+                            <p class="text-center flex items-center w-fit"><ion-icon name="cog" class="text-3xl xl:text-6xl"></ion-icon></p>
+                        </div>
+                    </div>
+                    
+                    <!-- USER -->
+                    <div class="flex mt-8 flex-col">
+                        <h1 class="font-semibold font-poppins text-xl">Users</h1>
+                        <div class="flex flex-wrap justify-start mt-2 gap-12 bg-white shadow-md px-6 md:px-8 xl:px-12 py-5 rounded-xl">
+                            @if($users->isEmpty())
+                                <div class="w-full text-center py-10">
+                                    <p class="text-gray-400 font-poppins text-base">Belum ada user terdaftar!</p>
+                                </div>
+                            @else
+                                @foreach ($users as $user)
+                                    <div class="flex flex-col gap-3 w-fit text-center hover:bottom-2 transition-all">
+                                        <div class="background w-12 h-12 xl:w-20 xl:h-20 bg-center bg-cover rounded-full m-auto shadow-sm"
+                                            style="background-image: url('https://ui-avatars.com/api/?name={{ urlencode($user->nama) }}&background=random&color=fff');">
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <h1 class="font-bold tracking-wide text-center text-base sm:text-lg xl:text-xl font-poppins">
+                                                {{ $user->nama }}
+                                            </h1>
+                                            <p class="text-center text-slate-400 font-poppins text-xs md:text-sm">
+                                                {{ $user->departemen }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                <!-- Button Tambah User -->
+                                @can('admin')
+                                    <a href="/tambah-users"
+                                        class="flex flex-col gap-3 w-fit text-center my-auto relative hover:bottom-2 md:hover:bottom-0 transition-all">
+                                        <ion-icon name="add"
+                                            class="md:text-3xl xl:text-7xl font-bold rounded-full p-2 hover:bg-slate-100"></ion-icon>
+                                        <p class="font-bold font-poppins tracking-wide text-center text-xs text-slate-400 hover:text-primary2">
+                                            Selengkapnya..
+                                        </p>
+                                    </a>
+                                @endcan
+                            @endif
+                        </div>                           
+                    </div>
 
-            <div class="relative overflow-x-auto shadow-md rounded-lg mt-8">
-                <h1 class="text-xl font-semibold font-poppins mb-5">Timeline</h1>
-                <table class="min-w-[700px] w-full text-sm text-left rtl:text-right text-primary2">
-                    <thead class="text-xs text-gray-700 uppercase bg-white">
-                        <tr>
-                            <th scope="col" class="px-4 py-3">Plat Nomor</th>
-                            <th scope="col" class="px-4 py-3">Merk/Seri</th>
-                            <th scope="col" class="px-4 py-3">Kategori</th>
-                            <th scope="col" class="px-4 py-3">Peminjam</th>
-                            <th scope="col" class="px-4 py-3">Status</th>
-                            <th scope="col" class="px-4 py-3">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="bg-white border-b border-gray-200">
-                            <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
-                            <td class="px-4 py-4">Avanza</td>
-                            <td class="px-4 py-4">Mobil</td>
-                            <td class="px-4 py-4">Abdul</td>
-                            <td class="px-4 py-4">
-                                <p class="bg-yellow-100 rounded-full w-fit px-2 font-semibold">Digunakan</p>
-                            </td>
-                            <td class="px-4 py-4 space-x-2">
-                                <a href="#"
-                                    class="font-medium bg-yellow-300 px-3 py-1 rounded-lg hover:opacity-60">Edit</a>
-                                <a href="#"
-                                    class="font-medium bg-red-500 px-3 py-1 rounded-lg hover:opacity-60">Hapus</a>
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b border-gray-200">
-                            <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
-                            <td class="px-4 py-4">Avanza</td>
-                            <td class="px-4 py-4">Mobil</td>
-                            <td class="px-4 py-4">Abdul</td>
-                            <td class="px-4 py-4">
-                                <p class="bg-red-400 rounded-full w-fit px-2 font-semibold">Perbaikan</p>
-                            </td>
-                            <td class="px-4 py-4 space-x-2">
-                                <a href="#"
-                                    class="font-medium bg-yellow-300 px-3 py-1 rounded-lg hover:opacity-60">Edit</a>
-                                <a href="#"
-                                    class="font-medium bg-red-500 px-3 py-1 rounded-lg hover:opacity-60">Hapus</a>
-                            </td>
-                        </tr>
-                        <tr class="bg-white border-b border-gray-200">
-                            <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
-                            <td class="px-4 py-4">Avanza</td>
-                            <td class="px-4 py-4">Mobil</td>
-                            <td class="px-4 py-4">Abdul</td>
-                            <td class="px-4 py-4">
-                                <p class="bg-green-300 rounded-full w-fit px-2 font-semibold">Available</p>
-                            </td>
-                            <td class="px-4 py-4 space-x-2">
-                                <a href="#"
-                                    class="font-medium bg-yellow-300 px-3 py-1 rounded-lg hover:opacity-60">Edit</a>
-                                <a href="#"
-                                    class="font-medium bg-red-500 px-3 py-1 rounded-lg hover:opacity-60">Hapus</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    {{-- Time Line Kendaraan --}}
+                    <div class="relative overflow-x-auto rounded-lg mt-8">
+                        <h1 class="text-xl font-semibold font-poppins mb-2">Timeline</h1>
+                        <table class="min-w-[700px] w-full text-sm  shadow-sm text-left rtl:text-right text-primary2">
+                            <thead class="text-xs text-gray-700 uppercase bg-white">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3">Plat Nomor</th>
+                                    <th scope="col" class="px-4 py-3">Merk</th>
+                                    <th scope="col" class="px-4 py-3">Seri</th>
+                                    <th scope="col" class="px-4 py-3">Kategori</th>
+                                    <th scope="col" class="px-4 py-3">Peminjam</th>
+                                    <th scope="col" class="px-4 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b border-gray-200">
+                                    <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
+                                    <td class="px-4 py-4">Avanza</td>
+                                    <td class="px-4 py-4">Avanza 1</td>
+                                    <td class="px-4 py-4">Mobil</td>
+                                    <td class="px-4 py-4">Abdul</td>
+                                    <td class="px-4 py-4">
+                                        <p class="bg-yellow-100 rounded-full w-fit px-2 font-semibold">Digunakan</p>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b border-gray-200">
+                                    <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
+                                    <td class="px-4 py-4">Avanza</td>
+                                    <td class="px-4 py-4">Avanza 2</td>
+                                    <td class="px-4 py-4">Mobil</td>
+                                    <td class="px-4 py-4">Abdul</td>
+                                    <td class="px-4 py-4">
+                                        <p class="bg-red-400 rounded-full w-fit px-2 font-semibold">Perbaikan</p>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b border-gray-200">
+                                    <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
+                                    <td class="px-4 py-4">Avanza</td>
+                                    <td class="px-4 py-4">Avanza 3</td>
+                                    <td class="px-4 py-4">Mobil</td>
+                                    <td class="px-4 py-4">Abdul</td>
+                                    <td class="px-4 py-4">
+                                        <p class="bg-green-300 rounded-full w-fit px-2 font-semibold">Available</p>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b border-gray-200">
+                                    <th scope="row" class="px-4 py-4 font-medium text-primary2">BP1234</th>
+                                    <td class="px-4 py-4">Avanza</td>
+                                    <td class="px-4 py-4">Avanza 3</td>
+                                    <td class="px-4 py-4">Mobil</td>
+                                    <td class="px-4 py-4">Abdul</td>
+                                    <td class="px-4 py-4">
+                                        <p class="bg-green-300 rounded-full w-fit px-2 font-semibold">Available</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- right -->
+                @if(auth()->user()->role !== 'staff')
+                    <h1 class="font-bold font-poppins text-xl mt-6 hidden sm:flex md:hidden">Notifikasi</h1>
+                    <div class="w-full lg:w-1/3 flex-col sm:flex md:flex-col gap-3">
+                        <h1 class="font-bold font-poppins text-xl flex sm:hidden md:flex">Permohonan Terbaru</h1>
+                        <div class="flex flex-col bg-white py-5 rounded-xl shadow-sm">
+                            @if($permohonanPending->isEmpty())
+                                <p class="text-center text-sm text-gray-500">Tidak ada permohonan terbaru yang menunggu verifikasi.</p>
+                            @else
+                                <ul class="flex flex-col gap-5 max-h-56 px-5 overflow-y-auto">
+                                    @foreach($permohonanPending as $p)
+                                    <li class="flex gap-3 items-start">
+                                        <div class="background w-10 h-10 bg-center bg-cover rounded-full shadow-sm"
+                                            style="background-image: url({{ asset('assets/user.jpg') }});"></div> <!-- Ganti dengan path yang sesuai -->
+                                        <p class="text-sm"><b>{{ $p->nama }}</b>, menunggu untuk verifikasi akun.</p> <!-- Sesuaikan dengan field di database -->
+                                    </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <a href="{{ route('daftar-permohonan') }}" class="flex mt-2 mx-5 items-start border-2 border-dotted border-slate-300 rounded-xl p-2">
+                                <h1 class="font-semibold mx-auto">Setujui Peminjaman</h1>
+                            </a>
+                        </div>
+                        
+                        <h1 class="font-bold font-poppins text-xl mt-7 flex sm:hidden md:flex">Verifikasi Akun Terbaru</h1>
+                        <div class="flex flex-col bg-white py-5 rounded-xl shadow-sm">
+                            @if($akunPending->isEmpty())
+                                <p class="text-center text-sm text-gray-500">Tidak ada akun yang menunggu verifikasi.</p>
+                            @else
+                                <ul class="flex flex-col gap-5 max-h-56 px-5 overflow-y-auto">
+                                    @foreach($akunPending as $va)
+                                    <li class="flex gap-3 items-center">
+                                        <div class="background w-10 h-10 bg-center bg-cover rounded-full shadow-sm"
+                                            style="background-image: url({{ $va->image ? asset('storage/'.$va->image) : 'https://ui-avatars.com/api/?name='.urlencode($va->nama).'&background=random&color=fff' }});">
+                                        </div>
+                                        <p class="text-sm text-center"><b>{{ $va->nama }}</b>, menunggu untuk verifikasi akun.</p>
+                                    </li>                                    
+                                    @endforeach
+                                </ul>
+                            @endif
+                            <a href="{{ route('permohonan-verifikasi') }}" class="flex mt-2 mx-5 items-start border-2 border-dotted border-slate-300 rounded-xl p-2">
+                                <h1 class="font-semibold mx-auto">Verifikasi Akun</h1>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
-            <div class="m-auto w-fit my-5">
-                <a href="/timeline-peminjaman" class="font-semibold font-poppins underline">More..</a>
-            </div>
+            
         </div>
     </div>
 

@@ -3,16 +3,21 @@
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Jurusan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
     public function index()
     {
-        return view('register');
+        $jurusans = Jurusan::all();
+        return view('register', compact('jurusans'));
     }
+
 
     public function register(Request $request)
     {
@@ -24,9 +29,9 @@ class RegisterController extends Controller
             'email' => 'required|email|unique:users,email',
             'no_hp' => 'required|numeric|digits:12',
             'foto_ktp' => 'required|image|mimes:jpg,png,jpeg,gif',
-            'prodi' => 'required|string',
+            'id_jurusan' => 'required|exists:jurusan,id_jurusan',
             'password' => 'required|string|min:8',
-        ]);
+        ]);        
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
@@ -42,12 +47,12 @@ class RegisterController extends Controller
             'email' => $request->email,
             'no_hp' => $request->no_hp,
             'foto_ktp' => $fotoKtpPath,
-            'prodi' => $request->prodi,
+            'id_jurusan' => $request->id_jurusan,
             'password' => Hash::make($request->password),
             'status' => 'pending',
         ]);
+        
 
         return redirect('/login')->with('success', 'Akun berhasil dibuat. Tunggu konfirmasi dari admin!');
     }
-
 }
