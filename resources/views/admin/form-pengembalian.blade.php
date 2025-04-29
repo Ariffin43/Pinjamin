@@ -7,7 +7,7 @@
     <title>Dashboard | Users</title>
     @vite('resources/css/app.css')
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 </head>
 
 <body class="bg-slate-200">
@@ -29,21 +29,26 @@
                         Peminjaman</a></li>
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/pinjam-kendaraan"
                         class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Pinjam
-                        Kendaraan</a></li>
-                @if(auth()->user()->role !== 'staff')        
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="/daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
-                        Permohonan
-                    </a>
+                        Kendaraan</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="/user" class="flex items-center">
-                        <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
-                    </a>
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/peminjaman-saya.html"
+                    class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Peminjaman
+                    Saya</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/permohonan-verifikasi"
-                        class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
-                </li>
+                @if(auth()->user()->role !== 'staff')
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="/daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
+                            Permohonan
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="/user" class="flex items-center">
+                            <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/permohonan-verifikasi"
+                            class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
+                    </li>
                 @endif
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="logout"
                         class="flex items-center"><ion-icon name="log-out" class="text-2xl pr-2"></ion-icon>Keluar</a>
@@ -58,8 +63,7 @@
 
             <!-- Navbar -->
             <div class="flex justify-between">
-                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Pinjam Kendaraan
-                </h1>
+                <h1 class="font-poppins font-bold text-xl sm:text-2xl flex items-center">Form Peminjaman</h1>
 
                 <button class="flex w-fit gap-3" id="openPopupProfile">
                     <div class="flex flex-col text-sm">
@@ -79,8 +83,8 @@
                         <h2 class="text-xl font-semibold mb-4">Form: Data Diri</h2>
 
                         <!-- Modal Form -->
-                        <form id="popupFormProfile">
-
+                        <form id="popupFormProfile" method="POST" action="" enctype="multipart/form-data">
+                            @csrf                        
                             <div class="mb-4">
                                 <label for="foto-profile" class="block text-sm font-medium">Foto Profile</label>
                                 <input type="file" id="foto-profile" name="foto" required
@@ -141,8 +145,8 @@
                                 </div>
                                 
                                 <div class="mb-4">
-                                    <label for="ktp" class="block text-sm font-medium">KTP</label>
-                                    <input type="file" id="ktp" name="ktp" required
+                                    <label for="foto_ktp" class="block text-sm font-medium">KTP</label>
+                                    <input type="file" id="foto_ktp" name="foto_ktp" required
                                         class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                                 </div>
 
@@ -159,54 +163,112 @@
 
             <!-- Konten Utama -->
             <div class="relative overflow-x-auto mt-8">
-                <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto m-auto">
-                    <h2 class="text-xl font-semibold mb-4">Pinjam Kendaraan</h2>
-                    <form id="popupFormPinjam1" class="font-normal" action="{{ route('pinjam-kendaraan.store') }}" method="POST">
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto m-auto">
+                    <h2 class="text-xl font-bold mb-4">Pengembalian Kendaraan</h2>
+                    <form id="popupFormPinjam1" class="font-normal" action="{{ route('pengembalian.kendaraan', $peminjaman->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="id_kendaraan" value="{{ $kendaraan->id }}">
-                        <input type="hidden" name="id_user" value="{{ $user->id }}">
+                        @method('PUT')
+                
+                        <h2 class="text-lg font-semibold mb-4">Kondisi Kendaraan</h2>
+                
+                        <!-- Kondisi Ban -->
+                        <label class="block mb-2 font-medium">Kondisi Ban</label>
+                        <select name="kondisi_ban"
+                            class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" required>
+                            <option value="">Pilih Kondisi Ban</option>
+                            <option value="baik">Baik</option>
+                            <option value="rusak">Rusak</option>
+                        </select>
+                
+                        <!-- Kondisi Body -->
+                        <label class="block mb-2 font-medium">Kondisi Body</label>
+                        <select name="kondisi_body"
+                            class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" required>
+                            <option value="">Pilih Kondisi Body</option>
+                            <option value="tidak_lecet">Tidak Lecet</option>
+                            <option value="lecet">Lecet</option>
+                        </select>
+                
+                        <!-- Kondisi Mesin -->
+                        <label class="block mb-2 font-medium">Kondisi Mesin</label>
+                        <select name="kondisi_mesin"
+                            class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" required>
+                            <option value="">Pilih Kondisi Mesin</option>
+                            <option value="normal">Normal</option>
+                            <option value="ada_masalah">Ada Masalah</option>
+                        </select>
+                
+                        <!-- BBM Tersisa -->
+                        <label class="block mb-2 font-medium">BBM Tersisa (liter / %)</label>
+                        <input type="text" name="bbm" placeholder="Contoh: 10 Liter atau 40%" 
+                            class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" required>
+                
+                        <!-- Lampu / Elektrikal -->
+                        <label class="block mb-2 font-medium">Lampu / Elektrikal</label>
+                        <select name="elektrikal"
+                            class="w-full p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 mb-4" required>
+                            <option value="">Pilih Kondisi Lampu / Elektrikal</option>
+                            <option value="normal">Normal</option>
+                            <option value="bermasalah">Bermasalah</option>
+                        </select>
                 
                         <div class="mb-4">
-                            <label for="merek" class="block font-semibold text-sm">Merk</label>
-                            <input type="text" id="merek" name="merek" required value="{{ $kendaraan->merek->nama }}" readonly
+                            <label class="block mb-2 font-medium">Foto Dokumentasi</label>
+                            <input type="file" id="foto" name="foto" required
                                 class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
                         </div>
-                        <div class="mb-4">
-                            <label for="seri" class="block font-semibold text-sm">Seri</label>
-                            <input type="text" id="seri" name="seri" required value="{{ $kendaraan->seri }}" readonly
-                                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                
+                        <!-- Form Lokasi -->
+                        <div class="mt-6">
+                            <h2 class="font-poppins mb-2">Lokasi Pengembalian</h2>
+                            <div id="map" class="rounded-xl shadow-md" style="height: 300px;"></div>
+                
+                            <input type="hidden" name="latitude" id="latitude">
+                            <input type="hidden" name="longitude" id="longitude">
+                
+                            <p class="text-xs mt-2 text-slate-500">Pastikan lokasi sudah sesuai.</p>
                         </div>
-                        <div class="mb-4">
-                            <label for="tanggal_awal_peminjaman" class="block font-semibold text-sm">Estimasi Awal</label>
-                            <div class="flex flex-col gap-2">
-                                <input type="datetime-local" id="tanggal_awal_peminjaman" name="tanggal_awal_peminjaman" required
-                                    class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
-                                
-                                <label for="tanggal_akhir_peminjaman" class="block font-semibold text-sm">Estimasi Akhir</label>
-                                <input type="datetime-local" id="tanggal_akhir_peminjaman" name="tanggal_akhir_peminjaman" required
-                                    class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 w-full">
-                            </div>
-                        </div>
-                        <div class="mb4">
-                            <label for="tujuan" class="block text-sm font-medium">Tujuan Peminjaman</label>
-                            <textarea name="tujuan_peminjaman" id="tujuan_peminjaman"
-                                class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-                        </div>
-
-                        <input type="text" name="status_peminjaman" value="Pending" hidden>
-
+                
+                        <script>
+                            // Inisialisasi peta
+                            const map = L.map('map').setView([0, 0], 13);
+                            const marker = L.marker([0, 0]).addTo(map);
+                
+                            // Tambahkan tiles (background peta)
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; OpenStreetMap'
+                            }).addTo(map);
+                
+                            // Cari lokasi user
+                            navigator.geolocation.getCurrentPosition(function (position) {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                
+                                // Update marker dan peta
+                                map.setView([lat, lng], 15);
+                                marker.setLatLng([lat, lng]);
+                
+                                // Set input value
+                                document.getElementById('latitude').value = lat;
+                                document.getElementById('longitude').value = lng;
+                            }, function () {
+                                alert('Gagal mengambil lokasi. Pastikan GPS aktif.');
+                            });
+                        </script>
+                
                         <div class="flex justify-end space-x-2">
-                            <a href="/pinjam-kendaraan"
-                                class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</a>
+                            <a href="/peminjaman-saya" class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</a>
                             <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">Submit</button>
                         </div>
                     </form>
                 </div>
+                
             </div>
         </div>
     </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const sidebar = document.getElementById('sidebar');
         const openSidebar = document.getElementById('openSidebar');
@@ -235,49 +297,7 @@
         closePopup.addEventListener('click', () => {
             popup.classList.add('hidden');
         });
-
-        // Submit form
-        document.getElementById('popupForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Form submitted!');
-            popup.classList.add('hidden');
-        });
-
     </script>
-
-    <script>
-    $(document).ready(function () {
-        $("#popupFormPinjam1").submit(function (e) {
-            e.preventDefault(); // Mencegah reload halaman
-
-            $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
-                data: $(this).serialize(),
-                dataType: "json", // Pastikan response adalah JSON
-                success: function (response) {
-                    if (response.status === "success") {
-                        Swal.fire({
-                            title: "Berhasil!",
-                            text: response.message,
-                            icon: "success",
-                            confirmButtonText: "OK"
-                        }).then(() => {
-                            window.location.href = "/timeline-peminjaman"; // Redirect ke halaman lain
-                        });
-                    } else {
-                        Swal.fire("Error!", response.message, "error");
-                    }
-                },
-                error: function (xhr) {
-                    console.log(xhr.responseText); // Cek error di console
-                    Swal.fire("Error!", "Terjadi kesalahan saat menyimpan data.", "error");
-                }
-            });
-        });
-    });
-    </script>
-    
 </body>
 
 

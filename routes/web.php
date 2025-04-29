@@ -30,14 +30,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/pinjam-kendaraan', [PeminjamanController::class, 'index'])->name('pinjam-kendaraan');
     Route::resource('pinjam-kendaraan', controller: PeminjamanController::class);
     Route::get('/form-peminjaman/{id}', [PeminjamanController::class, 'create'])->name('peminjaman.create');
-    
+    Route::post('/merek-kendaraan/store', [PeminjamanController::class, 'tambahMerek'])->name('tambah.merek');
+    Route::delete('/merek-kendaraan/{id}/delete', [PeminjamanController::class, 'hapusMerek'])->name('hapus.merek');
+
     // CRUD Daftar Kendaraan
     Route::post('/tambah-kendaraan', [DaftarKendaraanController::class, 'store'])->name('tambahkendaraan');
-    Route::post('/edit-kendaraan/{id}', [DaftarKendaraanController::class, 'update'])->name('editkendaraan');
+    Route::put('/edit-kendaraan/{id}', [DaftarKendaraanController::class, 'update'])->name('editkendaraan');
     Route::delete('/hapus-kendaraan/{id}', [DaftarKendaraanController::class, 'destroy'])->name('hapuskendaraan');
 
     Route::get('/timeline-peminjaman', [TimelineController::class, 'index'])->name('timeline-peminjaman');
-    Route::resource('timeline-peminjaman', controller: TimelineController::class);
+    Route::put('/timeline-peminjaman/{id}', [TimelineController::class, 'update'])->name('timeline-peminjaman.update');
+    Route::delete('/timeline-peminjaman/{id}', [TimelineController::class, 'destroy'])->name('timeline-peminjaman.destroy');
 
     Route::get('/daftar-permohonan', [DaftarPermohonanController::class, 'index'])->name('daftar-permohonan');
     Route::resource(name: 'daftar-permohonan', controller: DaftarPermohonanController::class)->except(['index']);

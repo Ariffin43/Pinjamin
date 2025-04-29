@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kendaraan;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +22,12 @@ class DashboardController extends Controller
         $available = Kendaraan::where('status_kendaraan', 'Available')->count();
         $used = Kendaraan::where('status_kendaraan', 'Digunakan')->count();
         $repair = Kendaraan::where('status_kendaraan', 'Perbaikan')->count();
-
         $users = User::where('role', 'staff')->get();
         $user = Auth::user();
+        $permohonanPending = Peminjaman::where('status_peminjaman', 'pending')->latest()->take(6)->get();
+        $akunPending = User::where('status', 'pending')->latest()->take(6)->get();
 
-        return view('admin.index', compact('users', 'user', 'available', 'used', 'repair'));
+        return view('admin.index', compact('users', 'user', 'available', 'used', 'repair', 'permohonanPending', 'akunPending'));
     }
 
     public function store(Request $request)

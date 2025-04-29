@@ -3,9 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | Admin</title>
     @vite('resources/css/app.css')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
 </head>
 
@@ -28,21 +30,26 @@
                         Peminjaman</a></li>
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="pinjam-kendaraan"
                         class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Pinjam
-                        Kendaraan</a></li>
-                @if(auth()->user()->role !== 'staff')        
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
-                        Permohonan
-                    </a>
+                        Kendaraan</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="user" class="flex items-center">
-                        <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
-                    </a>
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/peminjaman-saya"
+                    class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Peminjaman
+                    Saya</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
-                        class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
-                </li>
+                @if(auth()->user()->role !== 'staff')
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
+                            Permohonan
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="user" class="flex items-center">
+                            <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
+                            class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
+                    </li>
                 @endif
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="logout"
                         class="flex items-center"><ion-icon name="log-out" class="text-2xl pr-2"></ion-icon>Keluar</a>
@@ -186,6 +193,7 @@
                             <th scope="col" class="px-4 py-3">Tanggal Awal</th>
                             <th scope="col" class="px-4 py-3">Tanggal Akhir</th>
                             <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-4 py-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -198,7 +206,7 @@
                                 <tr class="bg-white border-b border-gray-200">
                                     <td class="px-4 py-4">{{ $item->user->nama }}</td>
                                     <td class="px-4 py-4">{{ $item->kendaraan->no_plat }}</td>
-                                    <td class="px-4 py-4">{{ $item->kendaraan->merk }}</td>
+                                    <td class="px-4 py-4">{{ $item->kendaraan->merek->nama }}</td>
                                     <td class="px-4 py-4">{{ $item->kendaraan->seri }}</td>
                                     <td class="px-4 py-4">{{ $item->tujuan_peminjaman }}</td>
                                     <td class="px-4 py-4">{{ $item->tanggal_awal_peminjaman }}</td>
@@ -229,6 +237,150 @@
                                                 </p>
                                         @endswitch
                                     </td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="javascript:void(0)"
+                                                 onclick="openEditModal({{ $item }})"
+                                                class="font-medium bg-yellow-300 px-3 py-1 rounded-lg hover:opacity-60">
+                                                Edit
+                                            </a>
+                                    
+                                            <form action="{{ route('timeline-peminjaman.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="font-medium bg-red-500 px-3 py-1 rounded-lg hover:opacity-60">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    
+                                    
+                                    <!-- Modal Edit Peminjaman -->
+                                    <div id="editModal" class="fixed inset-0 hidden bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                        <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto m-auto">
+                                            <h2 class="text-xl font-semibold mb-4">Edit Peminjaman</h2>
+                                    
+                                            <form id="editForm" method="POST" action="">
+                                                @csrf
+                                                @method('PUT')
+                                    
+                                                <input type="hidden" id="edit_id" name="id">
+                                    
+                                                <div class="mb-4" hidden>
+                                                    <label for="edit_merek" class="block font-semibold text-sm">Merk</label>
+                                                    <input type="text" id="edit_merek" name="merek" value=""
+                                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                                </div>
+                                                
+                                                <div class="mb-4" hidden>
+                                                    <label for="edit_seri" class="block font-semibold text-sm">Seri</label>
+                                                    <input type="text" id="edit_seri" name="seri" value=""
+                                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                                </div>                                                
+                                    
+                                                <div class="mb-4">
+                                                    <label for="edit_tanggal_awal_peminjaman" class="block font-semibold text-sm">Estimasi Awal</label>
+                                                    <input type="datetime-local" id="edit_tanggal_awal_peminjaman" name="tanggal_awal_peminjaman" required
+                                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                                </div>
+                                    
+                                                <div class="mb-4">
+                                                    <label for="edit_tanggal_akhir_peminjaman" class="block font-semibold text-sm">Estimasi Akhir</label>
+                                                    <input type="datetime-local" id="edit_tanggal_akhir_peminjaman" name="tanggal_akhir_peminjaman" required
+                                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                                                </div>
+                                    
+                                                <div class="mb-4">
+                                                    <label for="edit_tujuan_peminjaman" class="block font-semibold text-sm">Tujuan Peminjaman</label>
+                                                    <textarea id="edit_tujuan_peminjaman" name="tujuan_peminjaman" required
+                                                        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+                                                </div>
+                                    
+                                                <div class="flex justify-end space-x-2">
+                                                    <button type="button" onclick="closeEditModal()" 
+                                                        class="bg-gray-300 text-black px-4 py-2 rounded-md">
+                                                        Cancel
+                                                    </button>
+                                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md">
+                                                        Submit
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <script>
+                                        // Fungsi untuk membuka modal dan mengisi data
+                                        function openEditModal(peminjaman) {
+                                            console.log(peminjaman);  // Cek apakah data peminjaman sudah benar
+                                            document.getElementById('edit_id').value = peminjaman.id;
+                                            document.getElementById('edit_merek').value = peminjaman.kendaraan.merek.nama;
+                                            document.getElementById('edit_seri').value = peminjaman.kendaraan.seri;
+                                            document.getElementById('edit_tanggal_awal_peminjaman').value = peminjaman.tanggal_awal_peminjaman;
+                                            document.getElementById('edit_tanggal_akhir_peminjaman').value = peminjaman.tanggal_akhir_peminjaman;
+                                            document.getElementById('edit_tujuan_peminjaman').value = peminjaman.tujuan_peminjaman;
+
+                                            // Tampilkan modal
+                                            document.getElementById('editModal').classList.remove('hidden');
+
+                                            // Set action form untuk submit ke URL yang benar
+                                            document.getElementById('editForm').action = `/timeline-peminjaman/${peminjaman.id}`;
+                                        }
+
+
+                                        // Fungsi untuk menutup modal
+                                        function closeEditModal() {
+                                            document.getElementById('editModal').classList.add('hidden');
+                                        }
+
+                                        // Fungsi untuk mengirim data menggunakan fetch
+                                        document.getElementById('editForm').addEventListener('submit', function (e) {
+                                            e.preventDefault(); // Mencegah form dari submit tradisional
+
+                                            const formData = new FormData(this); // Ambil data form
+
+                                            // Cek data yang dikirim
+                                            for (let [key, value] of formData.entries()) {
+                                                console.log(key, value); // Cek setiap field
+                                            }
+
+                                            const formAction = this.action; // Ambil URL action (URL yang sesuai dengan route)
+
+                                            // Kirim data menggunakan fetch
+                                            fetch(formAction, {
+                                                method: 'PUT',
+                                                body: formData,
+                                                headers: {
+                                                    'Accept': 'application/json',
+                                                    'X-Requested-With': 'XMLHttpRequest',
+                                                    'X-CSRF-TOKEN': formData.get('_token'),
+                                                },
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.success) {
+                                                    // Success logic here
+                                                } else {
+                                                    console.log(data); // Cek data yang diterima untuk informasi error
+                                                    Swal.fire({
+                                                        title: 'Error!',
+                                                        text: data.message || 'Terjadi kesalahan, silakan coba lagi.',
+                                                        icon: 'error',
+                                                        confirmButtonText: 'OK',
+                                                    });
+                                                }
+                                            })
+                                            .catch(error => {
+                                                console.error('Error:', error); // Cek error lebih lanjut
+                                            });
+                                        });
+
+
+
+                                    </script>
+                                    
                                 </tr>
                             @endforeach
                         @endif

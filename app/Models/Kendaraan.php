@@ -13,6 +13,7 @@ class Kendaraan extends Model
 
     protected $fillable = [
         'id_merek',
+        'atas_nama',
         'seri',
         'no_plat',
         'jenis_kendaraan',

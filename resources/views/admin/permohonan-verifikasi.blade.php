@@ -29,21 +29,26 @@
                         Peminjaman</a></li>
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="pinjam-kendaraan"
                         class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Pinjam
-                        Kendaraan</a></li>
-                @if(auth()->user()->role !== 'staff')        
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
-                        Permohonan
-                    </a>
+                        Kendaraan</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2">
-                    <a href="user" class="flex items-center">
-                        <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
-                    </a>
+                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="/peminjaman-saya"
+                    class="flex items-center"><ion-icon name="car" class="text-2xl pr-2"></ion-icon>Peminjaman
+                    Saya</a>
                 </li>
-                <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
-                        class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
-                </li>
+                @if(auth()->user()->role !== 'staff')
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="daftar-permohonan" class="flex items-center"><ion-icon name="megaphone" class="text-2xl pr-2"></ion-icon>Daftar
+                            Permohonan
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2">
+                        <a href="user" class="flex items-center">
+                            <ion-icon name="person" class="text-2xl pr-2"></ion-icon>Users
+                        </a>
+                    </li>
+                    <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="permohonan-verifikasi"
+                            class="flex items-center"><ion-icon name="person-add" class="text-2xl pr-2"></ion-icon>Permohonan Verifikasi</a>
+                    </li>
                 @endif
                 <li class="hover:bg-slate-200 rounded-l-full p-2"><a href="logout"
                         class="flex items-center"><ion-icon name="log-out" class="text-2xl pr-2"></ion-icon>Keluar</a>

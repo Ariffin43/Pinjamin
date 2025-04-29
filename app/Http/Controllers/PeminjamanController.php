@@ -18,6 +18,7 @@ class PeminjamanController extends Controller
         $users = User::where('role', 'staff')->get();
         $user = Auth::user();
         $merek = Merek::all();
+        $kendaraan = Kendaraan::all();
 
         if (auth()->user()->role === 'admin') {
             $peminjaman = Peminjaman::with('kendaraan')->get();
@@ -27,27 +28,26 @@ class PeminjamanController extends Controller
                 ->get();
         }
 
-        // Ambil semua kendaraan
-        $kendaraan = Kendaraan::all();
-
         // Sinkronkan status kendaraan berdasarkan status peminjaman
         foreach ($kendaraan as $item) {
             $sedangDipinjam = Peminjaman::where('id_kendaraan', $item->id)
                 ->where('status_peminjaman', 'Di Terima')
                 ->exists();
-
+        
             if ($sedangDipinjam) {
                 if ($item->status_kendaraan !== 'Digunakan') {
                     $item->status_kendaraan = 'Digunakan';
                     $item->save();
                 }
             } else {
-                if ($item->status_kendaraan !== 'Available') {
+                // Hanya set status 'Available' jika status sebelumnya bukan 'Perbaikan'
+                if ($item->status_kendaraan !== 'Perbaikan' && $item->status_kendaraan !== 'Available') {
                     $item->status_kendaraan = 'Available';
                     $item->save();
                 }
             }
         }
+        
 
         // Ambil kembali kendaraan yang statusnya Available untuk form input
         $kendaraanTersedia = Kendaraan::where('status_kendaraan', 'Available')->get();
@@ -55,80 +55,25 @@ class PeminjamanController extends Controller
         return view('admin.pinjam-kendaraan', compact('users', 'user', 'merek', 'peminjaman', 'kendaraanTersedia', 'kendaraan'));
     }
 
-    public function tambahkendaraan(request $request)
+    public function tambahMerek(Request $request)
     {
-        $validatedData = $request->validate([
-            'merk' => 'required|string|max:100',
-            'seri' => 'required|string|max:100',
-            'no_plat' => 'required|string|max:50',
-            'jenis_kendaraan' => 'required|string|max:50',
-            'detail_kendaraan' => 'required|string',
-            'status_kendaraan' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        $request->validate([
+            'nama' => 'required|string|max:255',
         ]);
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('kendaraan', 'public');
-            $validatedData['image'] = $imagePath;
-        }
-
-        Kendaraan::create($validatedData);
-
-        return response()->json(['message' => 'Kendaraan berhasil ditambahkan']);
-    }
-
-    public function editkendaraan(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'merk' => 'required|string|max:100',
-            'seri' => 'required|string|max:100',
-            'no_plat' => 'required|string|max:50',
-            'jenis_kendaraan' => 'required|string|max:50',
-            'detail_kendaraan' => 'required|string',
-            'status_kendaraan' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        Merek::create([
+            'nama' => $request->nama,
         ]);
 
-        $kendaraan = Kendaraan::findOrFail($id);
-
-        if ($request->hasFile('image')) {
-            if ($kendaraan->image) {
-                Storage::disk('public')->delete($kendaraan->image);
-            }
-            $imagePath = $request->file('image')->store('kendaraan', 'public');
-            $validatedData['image'] = $imagePath;
-        }
-
-        $kendaraan->update($validatedData);
-
-        return response()->json(['message' => 'Kendaraan berhasil diperbarui']);
+        return back()->with('success', 'Merek berhasil ditambahkan.');
     }
 
-
-    public function hapusKendaraan($id)
+    public function hapusMerek($id)
     {
-        $kendaraan = Kendaraan::find($id);
+        $merek = Merek::findOrFail($id);
+        $merek->delete();
 
-        if (!$kendaraan) {
-            return response()->json(['message' => 'Kendaraan tidak ditemukan'], 404);
-        }
-
-        try {
-            // Hapus semua peminjaman yang terkait dengan kendaraan ini
-            Peminjaman::where('id_kendaraan', $id)->delete();
-
-            // Hapus gambar kendaraan jika ada
-            if ($kendaraan->image) {
-                Storage::disk('public')->delete($kendaraan->image);
-            }
-
-            // Hapus kendaraan
-            $kendaraan->delete();
-
-            return response()->json(['message' => 'Kendaraan dan peminjaman terkait berhasil dihapus']);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
-        }
+        return back()->with('success', 'Merek berhasil dihapus.');
     }
 
     public function create($id)
